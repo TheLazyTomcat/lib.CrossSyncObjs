@@ -1,3 +1,81 @@
+{-------------------------------------------------------------------------------
+
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-------------------------------------------------------------------------------}
+{===============================================================================
+
+  CrossSyncObjs
+
+    Provides wrapper classes for synchronization primitives and wait functions
+    from libraries WinSynObjs and LinSyncObjs.
+
+    Classes in WinSynObjs and LinSyncObjs are sticking to a nomenclature used
+    by system synchronization objects they are based on, as a result the
+    corresponding synchronizers in both libraries have differently named
+    methods for the same functionality.
+
+    Wrappers in this library are hiding these differences behind a unified
+    interface. Note that only functionality common for both wrapped libraries
+    is provided - specialities (eg. releasing a semaphore by more than 1,
+    alertable waiting, ...) are not implemented or default value is used.
+
+      WARNING - unless noted otherwise, do not assume any features the
+                synchronizers might provide (eg. recursive locking, lock
+                promotion, ...), as they are usually only available in some
+                systems, and therefore cannot be relied upon. Expect only
+                bare-bone functionality.
+
+      WARNING - remembed that all system-specific limitations still apply here
+                (eg. max 64 events in WaitForMultipleEvents on Windows).
+
+  Version 1.0 (2022-03-27)
+
+  Last change 2022-03-27
+
+  ©2022 František Milt
+
+  Contacts:
+    František Milt: frantisek.milt@gmail.com
+
+  Support:
+    If you find this code useful, please consider supporting its author(s) by
+    making a small donation using the following link(s):
+
+      https://www.paypal.me/FMilt
+
+  Changelog:
+    For detailed changelog and history please refer to this git repository:
+
+      github.com/TheLazyTomcat/Lib.CrossSyncObjs
+
+  Dependencies:
+    AuxTypes           - github.com/TheLazyTomcat/Lib.AuxTypes
+    AuxClasses         - github.com/TheLazyTomcat/Lib.AuxClasses
+    BitOps             - github.com/TheLazyTomcat/Lib.BitOps
+  * BitVector          - github.com/TheLazyTomcat/Lib.BitVector
+    HashBase           - github.com/TheLazyTomcat/Lib.HashBase
+    InterlockedOps     - github.com/TheLazyTomcat/Lib.InterlockedOps
+    NamedSharedItems   - github.com/TheLazyTomcat/Lib.NamedSharedItems
+    SHA1               - github.com/TheLazyTomcat/Lib.SHA1
+  * SimpleCPUID        - github.com/TheLazyTomcat/Lib.SimpleCPUID
+  * SimpleFutex        - github.com/TheLazyTomcat/Lib.SimpleFutex
+    SharedMemoryStream - github.com/TheLazyTomcat/Lib.SharedMemoryStream
+    StaticMemoryStream - github.com/TheLazyTomcat/Lib.StaticMemoryStream
+    StrRect            - github.com/TheLazyTomcat/Lib.StrRect
+  * UInt64Utils        - github.com/TheLazyTomcat/Lib.UInt64Utils
+
+  Library UInt64Utils is required only when compiling for Windows OS.
+
+  Libraries BitVector and SimpleFutex are required only when compiling for
+  Linux OS.
+
+  Library SimpleCPUID might not be required when compiling for Windows OS,
+  depending on defined symbols in InterlockedOps and BitOps libraries.  
+
+===============================================================================}
 unit CrossSyncObjs;
 
 {$IF Defined(WINDOWS) or Defined(MSWINDOWS)}
@@ -27,7 +105,7 @@ type
   TCSOWaitResult = (wrSignaled,wrTimeout,wrError);
 
 const
-  INFINITE = UInt32(-1);
+  INFINITE = UInt32(-1);  // infinite timeout
 
 {===============================================================================
 --------------------------------------------------------------------------------
@@ -98,6 +176,9 @@ type
                                 TCriticalSection
 --------------------------------------------------------------------------------
 ===============================================================================}
+{
+  Always allows recursive locking.
+}
 {===============================================================================
     TCriticalSection - class declaration
 ===============================================================================}
@@ -151,7 +232,7 @@ type
     constructor Create(const Name: String); overload;  
     constructor Create(ManualReset, InitialState: Boolean); overload;
     constructor Create; overload;
-    constructor Open(const Name: String);
+    constructor Open(const Name: String{$IFNDEF FPC}; Dummy: Integer = 0{$ENDIF});
     constructor DuplicateFrom(Source: TEvent);
     destructor Destroy; override;
     procedure Lock; virtual;
@@ -164,6 +245,9 @@ type
                                      TMutex
 --------------------------------------------------------------------------------
 ===============================================================================}
+{
+  Allows for recursive locking.
+}
 {===============================================================================
     TMutex - class declaration
 ===============================================================================}
@@ -175,7 +259,7 @@ type
   public
     constructor Create(const Name: String); overload;
     constructor Create; overload;
-    constructor Open(const Name: String);
+    constructor Open(const Name: String{$IFNDEF FPC}; Dummy: Integer = 0{$ENDIF});
     constructor DuplicateFrom(Source: TMutex);
     destructor Destroy; override;
     Function Lock(Timeout: UInt32 = INFINITE): TCSOWaitResult; virtual;
@@ -221,7 +305,7 @@ type
   public
     constructor Create(const Name: String); overload;
     constructor Create; overload;
-    constructor Open(const Name: String);
+    constructor Open(const Name: String{$IFNDEF FPC}; Dummy: Integer = 0{$ENDIF});
     constructor DuplicateFrom(Source: TReadWriteLock);
     destructor Destroy; override;
     procedure ReadLock; virtual;
@@ -271,7 +355,7 @@ type
   public
     constructor Create(const Name: String); overload;
     constructor Create; overload;
-    constructor Open(const Name: String);
+    constructor Open(const Name: String{$IFNDEF FPC}; Dummy: Integer = 0{$ENDIF});
     constructor DuplicateFrom(Source: TConditionVariable);
     destructor Destroy; override;
     procedure Wait(DataLock: TMutex; Timeout: UInt32 = INFINITE); overload; virtual;
@@ -624,7 +708,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-constructor TEvent.Open(const Name: String);
+constructor TEvent.Open(const Name: String{$IFNDEF FPC}; Dummy: Integer = 0{$ENDIF});
 begin
 inherited Create;
 {$IFDEF Windows}
@@ -736,7 +820,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-constructor TMutex.Open(const Name: String);
+constructor TMutex.Open(const Name: String{$IFNDEF FPC}; Dummy: Integer = 0{$ENDIF});
 begin
 inherited Create;
 fSync := {$IFDEF Windows}WinSyncObjs{$ELSE}LinSyncObjs{$ENDIF}.TMutex.Open(Name);
@@ -930,7 +1014,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-constructor TReadWriteLock.Open(const Name: String);
+constructor TReadWriteLock.Open(const Name: String{$IFNDEF FPC}; Dummy: Integer = 0{$ENDIF});
 begin
 inherited Create;
 fSync := {$IFDEF Windows}WinSyncObjs{$ELSE}LinSyncObjs{$ENDIF}.TReadWriteLock.Open(Name);
@@ -1073,7 +1157,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-constructor TConditionVariable.Open(const Name: String);
+constructor TConditionVariable.Open(const Name: String{$IFNDEF FPC}; Dummy: Integer = 0{$ENDIF});
 begin
 inherited Create;
 fSync := GetActualSyncClass.Open(Name);
@@ -1139,7 +1223,8 @@ end;
 
 procedure TConditionVariable.AutoCycle(DataLock: TMutex; Timeout: DWORD = INFINITE);
 begin
-fSync.AutoCycle(DataLock.fSync,Timeout);
+If Assigned(fOnPredicateCheckEvent) or Assigned(fOnPredicateCheckCallback) then
+  fSync.AutoCycle(DataLock.fSync,Timeout);
 end;
 
 
@@ -1195,7 +1280,8 @@ end;
 
 procedure TConditionVariableEx.AutoCycle(Timeout: DWORD = INFINITE);
 begin
-{$IFDEF Windows}WinSyncObjs{$ELSE}LinSyncObjs{$ENDIF}.TConditionVariableEx(fSync).AutoCycle(Timeout);
+If Assigned(fOnPredicateCheckEvent) or Assigned(fOnPredicateCheckCallback) then
+  {$IFDEF Windows}WinSyncObjs{$ELSE}LinSyncObjs{$ENDIF}.TConditionVariableEx(fSync).AutoCycle(Timeout);
 end;
 
 {===============================================================================
