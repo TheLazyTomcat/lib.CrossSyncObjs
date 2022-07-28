@@ -33,7 +33,7 @@
 
   Version 1.0 (2022-03-27)
 
-  Last change 2022-03-27
+  Last change 2022-07-29
 
   ©2022 František Milt
 
@@ -88,8 +88,8 @@ unit CrossSyncObjs;
 
 {$IFDEF FPC}
   {$MODE ObjFPC}
-  {$MODESWITCH DuplicateLocals ON}
-  {$MODESWITCH ClassicProcVars ON}
+  {$MODESWITCH DuplicateLocals+}
+  {$MODESWITCH ClassicProcVars+}
   {$DEFINE FPC_DisableWarns}
   {$MACRO ON}
 {$ENDIF}
