@@ -31,9 +31,9 @@
       WARNING - remembed that all system-specific limitations still apply here
                 (eg. max 64 events in WaitForMultipleEvents on Windows).
 
-  Version 1.0 (2022-03-27)
+  Version 1.0.1 (2022-08-05)
 
-  Last change 2022-07-29
+  Last change 2022-08-05
 
   ©2022 František Milt
 
@@ -221,11 +221,7 @@ type
 type
   TEvent = class(TAdvSyncObject)
   protected
-  {$IFDEF Windows}
-    fSync:  WinSyncObjs.TEvent;
-  {$ELSE}
-    fSync:  LinSyncObjs.TAdvancedEvent;
-  {$ENDIF}
+    fSync:  {$IFDEF Windows}WinSyncObjs{$ELSE}LinSyncObjs{$ENDIF}.TEvent;
     Function GetName: String; override;
   public
     constructor Create(const Name: String; ManualReset, InitialState: Boolean); overload;
@@ -666,7 +662,7 @@ inherited Create;
 {$IFDEF Windows}
 fSync := WinSyncObjs.TEvent.Create(ManualReset,InitialState,Name);
 {$ELSE}
-fSync := LinSyncObjs.TAdvancedEvent.Create(Name,ManualReset,InitialState);
+fSync := LinSyncObjs.TEvent.Create(Name,ManualReset,InitialState);
 {$ENDIF}
 end;
 
@@ -675,11 +671,7 @@ end;
 constructor TEvent.Create(const Name: String);
 begin
 inherited Create;
-{$IFDEF Windows}
-fSync := WinSyncObjs.TEvent.Create(Name);
-{$ELSE}
-fSync := LinSyncObjs.TAdvancedEvent.Create(Name);
-{$ENDIF}
+fSync := {$IFDEF Windows}WinSyncObjs{$ELSE}LinSyncObjs{$ENDIF}.TEvent.Create(Name);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -687,11 +679,7 @@ end;
 constructor TEvent.Create(ManualReset, InitialState: Boolean);
 begin
 inherited Create;
-{$IFDEF Windows}
-fSync := WinSyncObjs.TEvent.Create(ManualReset,InitialState);
-{$ELSE}
-fSync := LinSyncObjs.TAdvancedEvent.Create(ManualReset,InitialState);
-{$ENDIF}
+fSync := {$IFDEF Windows}WinSyncObjs{$ELSE}LinSyncObjs{$ENDIF}.TEvent.Create(ManualReset,InitialState);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -699,11 +687,7 @@ end;
 constructor TEvent.Create;
 begin
 inherited Create;
-{$IFDEF Windows}
-fSync := WinSyncObjs.TEvent.Create;
-{$ELSE}
-fSync := LinSyncObjs.TAdvancedEvent.Create;
-{$ENDIF}
+fSync := {$IFDEF Windows}WinSyncObjs{$ELSE}LinSyncObjs{$ENDIF}.TEvent.Create;
 end;
 
 //------------------------------------------------------------------------------
@@ -711,11 +695,7 @@ end;
 constructor TEvent.Open(const Name: String{$IFNDEF FPC}; Dummy: Integer = 0{$ENDIF});
 begin
 inherited Create;
-{$IFDEF Windows}
-fSync := WinSyncObjs.TEvent.Open(Name);
-{$ELSE}
-fSync := LinSyncObjs.TAdvancedEvent.Open(Name);
-{$ENDIF}
+fSync := {$IFDEF Windows}WinSyncObjs{$ELSE}LinSyncObjs{$ENDIF}.TEvent.Open(Name);
 end;
 
 //------------------------------------------------------------------------------
@@ -723,11 +703,7 @@ end;
 constructor TEvent.DuplicateFrom(Source: TEvent);
 begin
 inherited Create;
-{$IFDEF Windows}
-fSync := WinSyncObjs.TEvent.DuplicateFrom(Source.fSync);
-{$ELSE}
-fSync := LinSyncObjs.TAdvancedEvent.DuplicateFrom(Source.fSync);
-{$ENDIF}
+fSync := {$IFDEF Windows}WinSyncObjs{$ELSE}LinSyncObjs{$ENDIF}.TEvent.DuplicateFrom(Source.fSync);
 end;
 
 //------------------------------------------------------------------------------
@@ -1367,7 +1343,7 @@ end;
 
 Function WaitForMultipleEvents(Objects: array of TEvent; WaitAll: Boolean; Timeout: DWORD; out Index: Integer): TCSOWaitResult;
 var
-  SyncObjects:  array of {$IFDEF Windows}WinSyncObjs.TSimpleWinSyncObject{$ELSE}LinSyncObjs.TAdvancedEvent{$ENDIF};
+  SyncObjects:  array of {$IFDEF Windows}WinSyncObjs.TSimpleWinSyncObject{$ELSE}LinSyncObjs.TEvent{$ENDIF};
   i:            Integer;
 begin
 SetLength(SyncObjects,Length(Objects));
