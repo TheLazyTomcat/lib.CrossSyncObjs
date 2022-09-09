@@ -31,9 +31,9 @@
       WARNING - remembed that all system-specific limitations still apply here
                 (eg. max 64 events in WaitForMultipleEvents on Windows).
 
-  Version 1.0.1 (2022-08-05)
+  Version 1.0.2 (2022-09-09)
 
-  Last change 2022-08-05
+  Last change 2022-09-09
 
   ©2022 František Milt
 
@@ -137,6 +137,8 @@ type
     procedure Unlock; virtual;
   end;
 
+  TCriticalSectionRTL = TRTLCriticalSection;
+
 {===============================================================================
 --------------------------------------------------------------------------------
                      TRTLMultiReadExclusiveWriteSynchronizer
@@ -158,7 +160,10 @@ type
     procedure WriteUnlock; virtual;
   end;
 
+  TMultiReadExclusiveWriteSynchronizerRTL = TRTLMultiReadExclusiveWriteSynchronizer;
+
   TRTLMREW = TRTLMultiReadExclusiveWriteSynchronizer;
+  TMREWRTL = TRTLMREW;
 
 {===============================================================================
 --------------------------------------------------------------------------------
