@@ -33,7 +33,7 @@
 
   Version 1.0.2 (2022-09-09)
 
-  Last change 2022-09-09
+  Last change 2022-09-12
 
   ©2022 František Milt
 
@@ -58,6 +58,7 @@
   * BitVector          - github.com/TheLazyTomcat/Lib.BitVector
     HashBase           - github.com/TheLazyTomcat/Lib.HashBase
     InterlockedOps     - github.com/TheLazyTomcat/Lib.InterlockedOps
+    LinSyncObjs        - github.com/TheLazyTomcat/Lib.LinSyncObjs
     NamedSharedItems   - github.com/TheLazyTomcat/Lib.NamedSharedItems
     SHA1               - github.com/TheLazyTomcat/Lib.SHA1
   * SimpleCPUID        - github.com/TheLazyTomcat/Lib.SimpleCPUID
@@ -66,14 +67,16 @@
     StaticMemoryStream - github.com/TheLazyTomcat/Lib.StaticMemoryStream
     StrRect            - github.com/TheLazyTomcat/Lib.StrRect
   * UInt64Utils        - github.com/TheLazyTomcat/Lib.UInt64Utils
+    WinSyncObjs        - github.com/TheLazyTomcat/Lib.WinSyncObjs
 
-  Library UInt64Utils is required only when compiling for Windows OS.
+  Libraries UInt64Utils and WinSyncObjs are required only when compiling for
+  Windows OS.
 
-  Libraries BitVector and SimpleFutex are required only when compiling for
-  Linux OS.
+  Libraries BitVector, LinSyncObjs and SimpleFutex are required only when
+  compiling for Linux OS.
 
   Library SimpleCPUID might not be required when compiling for Windows OS,
-  depending on defined symbols in InterlockedOps and BitOps libraries.  
+  depending on defined symbols in InterlockedOps and BitOps libraries.
 
 ===============================================================================}
 unit CrossSyncObjs;
