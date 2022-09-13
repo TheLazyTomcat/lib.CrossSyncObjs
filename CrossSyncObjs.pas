@@ -33,7 +33,7 @@
 
   Version 1.0.2 (2022-09-09)
 
-  Last change 2022-09-12
+  Last change 2022-09-13
 
   ©2022 František Milt
 
@@ -1088,8 +1088,8 @@ end;
 procedure TConditionVariable.PredicateCheckHandler(Sender: TObject; var Predicate: Boolean);
 begin
 If Assigned(fOnPredicateCheckEvent) then
-  fOnPredicateCheckEvent(Self,Predicate);
-If Assigned(fOnPredicateCheckCallback) then
+  fOnPredicateCheckEvent(Self,Predicate)
+else If Assigned(fOnPredicateCheckCallback) then
   fOnPredicateCheckCallback(Self,Predicate);
 end;
 {$IFDEF FPCDWM}{$POP}{$ENDIF}
@@ -1103,8 +1103,8 @@ var
 begin
 WakeOptionsInternal := TranslateWakeOptions(WakeOptions);
 If Assigned(fOnDataAccessEvent) then
-  fOnDataAccessEvent(Self,WakeOptionsInternal);
-If Assigned(fOnDataAccessCallback) then
+  fOnDataAccessEvent(Self,WakeOptionsInternal)
+else If Assigned(fOnDataAccessCallback) then
   fOnDataAccessCallback(Self,WakeOptionsInternal);
 WakeOptions := TranslateWakeOptions(WakeOptionsInternal);
 end;
