@@ -33,7 +33,7 @@
 
   Version 1.0.2 (2022-09-09)
 
-  Last change 2022-09-13
+  Last change 2022-09-18
 
   ©2022 František Milt
 
@@ -324,7 +324,7 @@ type
 --------------------------------------------------------------------------------
 ===============================================================================}
 type
-  TConditionVariableClass = class of {$IFDEF Windows}WinSyncObjs{$ELSE}LinSyncObjs{$ENDIF}.TConditionVariable;
+  TConditionVariableClass = class of TConditionVariable;  // original class from WinSyncObjs or LinSyncObjs
 
 type
   // types for autocycle
