@@ -33,7 +33,7 @@
 
   Version 1.0.2 (2022-09-09)
 
-  Last change 2022-09-18
+  Last change 2022-09-24
 
   ©2022 František Milt
 
@@ -58,7 +58,7 @@
   * BitVector          - github.com/TheLazyTomcat/Lib.BitVector
     HashBase           - github.com/TheLazyTomcat/Lib.HashBase
     InterlockedOps     - github.com/TheLazyTomcat/Lib.InterlockedOps
-    LinSyncObjs        - github.com/TheLazyTomcat/Lib.LinSyncObjs
+  * LinSyncObjs        - github.com/TheLazyTomcat/Lib.LinSyncObjs
     NamedSharedItems   - github.com/TheLazyTomcat/Lib.NamedSharedItems
     SHA1               - github.com/TheLazyTomcat/Lib.SHA1
   * SimpleCPUID        - github.com/TheLazyTomcat/Lib.SimpleCPUID
@@ -67,7 +67,7 @@
     StaticMemoryStream - github.com/TheLazyTomcat/Lib.StaticMemoryStream
     StrRect            - github.com/TheLazyTomcat/Lib.StrRect
   * UInt64Utils        - github.com/TheLazyTomcat/Lib.UInt64Utils
-    WinSyncObjs        - github.com/TheLazyTomcat/Lib.WinSyncObjs
+  * WinSyncObjs        - github.com/TheLazyTomcat/Lib.WinSyncObjs
 
   Libraries UInt64Utils and WinSyncObjs are required only when compiling for
   Windows OS.
