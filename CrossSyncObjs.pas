@@ -31,11 +31,11 @@
       WARNING - remembed that all system-specific limitations still apply here
                 (eg. max 64 events in WaitForMultipleEvents on Windows).
 
-  Version 1.1.1 (2024-05-15)
+  Version 1.1.2 (2025-03-05)
 
-  Last change 2024-09-09
+  Last change 2025-03-05
 
-  ©2022-2024 František Milt
+  ©2022-2025 František Milt
 
   Contacts:
     František Milt: frantisek.milt@gmail.com
@@ -106,7 +106,7 @@ uses
   AuxTypes, AuxClasses, {$IFDEF Windows}WinSyncObjs{$ELSE}LinSyncObjs{$ENDIF};
 
 type
-  TCSOWaitResult = (wrSignaled,wrTimeout,wrError);
+  TCSOWaitResult = (wrSignaled,wrAbandoned,wrTimeout,wrError);
 
 const
   INFINITE = UInt32(-1);  // infinite timeout
@@ -251,7 +251,7 @@ type
 --------------------------------------------------------------------------------
 ===============================================================================}
 {
-  Allows for recursive locking.
+  Allows for recursive locking and is robust.
 }
 {===============================================================================
     TMutex - class declaration
@@ -461,12 +461,12 @@ Function TranslateWaitResult(WaitResult: {$IFDEF Windows}TWSOWaitResult{$ELSE}TL
 begin
 case WaitResult of
 {$IFDEF Windows}
-  WinSyncObjs.wrSignaled,
-  WinSyncObjs.wrAbandoned:  Result := wrSignaled;
+  WinSyncObjs.wrSignaled:   Result := wrSignaled;
+  WinSyncObjs.wrAbandoned:  Result := wrAbandoned;
   WinSyncObjs.wrTimeout:    Result := wrTimeout;
 {$ELSE}
-  LinSyncObjs.wrSignaled,
-  LinSyncObjs.wrAbandoned:  Result := wrSignaled;
+  LinSyncObjs.wrSignaled:   Result := wrSignaled;
+  LinSyncObjs.wrAbandoned:  Result := wrAbandoned;
   LinSyncObjs.wrTimeout:    Result := wrTimeout;
 {$ENDIF}
 else
@@ -593,7 +593,7 @@ end;
 
 procedure TRTLMultiReadExclusiveWriteSynchronizer.WriteUnlock;
 begin
-fSync.EndWrite
+fSync.EndWrite;
 end;
 
 
@@ -1417,7 +1417,7 @@ end;
 
 Function WaitResultToStr(WaitResult: TCSOWaitResult): String;
 const
-  WR_STRS: array[TCSOWaitResult] of String = ('Signaled','Timeout','Error');
+  WR_STRS: array[TCSOWaitResult] of String = ('Signaled','Abandoned','Timeout','Error');
 begin
 If (WaitResult >= Low(TCSOWaitResult)) and (WaitResult <= High(TCSOWaitResult)) then
   Result := WR_STRS[WaitResult]
